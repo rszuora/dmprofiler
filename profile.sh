@@ -20,14 +20,18 @@ echo $ROWCOUNT
 sqlite3 $DB "drop table profile;"
 sqlite3 $DB "create table profile(column_name, min_value, max_value, num_nulls, num_values, data_type, num_rows, pct_null, pct_values);"
 
+
 # head -1 $CSVFILE
-IFS=$',' 
-for COL in $COLIST; do 
-    # echo "insert into profile(column_name, rowcount) values('$COL', $ROWCOUNT);";  
+# IFS=$',' 
+IFS=','
+for COL in $COLIST 
+do 
+    # echo "insert into profile(column_name, rowcount) values('$COL', $ROWCOUNT);"
+    echo "    $COL"  
     MIN=`sqlite3 $DB "select min([$COL]) from $TABLE;"`
     MAX=`sqlite3 $DB "select max([$COL]) from $TABLE;"`
     NULLCOUNT=`sqlite3 $DB "select $ROWCOUNT - count([$COL]) from $TABLE;"`
-    sqlite3 $DB "insert into profile(column_name, min_value, max_value, num_nulls, num_rows) values( '$COL', '$MIN', '$MAX', $NULLCOUNT, $ROWCOUNT);";  
+    sqlite3 $DB "insert into profile(column_name, min_value, max_value, num_nulls, num_rows) values( '$COL', '$MIN', '$MAX', $NULLCOUNT, $ROWCOUNT);"
 done
 unset IFS
 sqlite3 $DB "select * from profile;"
